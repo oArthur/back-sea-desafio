@@ -7,8 +7,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import java.util.Collections;
-
 @SpringBootApplication
 public class DesafioSeaApplication {
 
@@ -26,7 +24,9 @@ public class DesafioSeaApplication {
 			c.setCpf("2121212");
 			c.setEndereco("adsadasdasdasd");
 			c.setTelefone("61982726392");
-			c.setEmails("arthur@gmail.com");
+			c.setTipo("Celular");
+			c.setCep("72000000");
+			c.setEmail("arthur@gmail.com");
 			clientRepository.save(c);
 		};
 	}

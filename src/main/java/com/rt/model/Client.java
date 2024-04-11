@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
-
 @Getter
 @Setter
 @Entity
@@ -22,7 +20,9 @@ public class Client {
 
     @Column(nullable = false)
     private String endereco;
+    private String cep;
 
-    private String emails;
+    private String email;
     private String telefone;
+    private String tipo;
 }

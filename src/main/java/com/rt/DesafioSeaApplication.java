@@ -21,11 +21,11 @@ public class DesafioSeaApplication {
 
 			Client c = new Client();
 			c.setNome("Arthur");
-			c.setCpf("2121212");
-			c.setEndereco("adsadasdasdasd");
+			c.setCpf("04929782191");
+			c.setEndereco("Guara");
 			c.setTelefone("61982726392");
 			c.setTipo("Celular");
-			c.setCep("72000000");
+			c.setCep("71071000");
 			c.setEmail("arthur@gmail.com");
 			clientRepository.save(c);
 		};

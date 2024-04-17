@@ -6,6 +6,7 @@ import com.rt.dto.EmailDTO;
 import com.rt.dto.TelefoneDTO;
 import com.rt.model.Client;
 import com.rt.model.Email;
+import com.rt.model.Telefone;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -32,20 +33,40 @@ public class ClientMapper {
                 client.getCpf(), client.getEndereco(), client.getCep(), telefones, emails);
     }
 
-    public Client toEntity(ClientDTO dto) {
+    public Client toEntity(ClientDTO clientDTO) {
 
-        if (dto == null) {
+        if (clientDTO == null) {
             return null;
         }
         Client client = new Client();
 
-        if (dto.id() != null){
-            client.setId(dto.id());
+        if (clientDTO.id() != null){
+            client.setId(clientDTO.id());
         }
-        client.setNome(dto.nome());
-        client.setCpf(dto.cpf());
-        client.setEndereco(dto.endereco());
-        client.setCep(dto.cep());
+        client.setNome(clientDTO.nome());
+        client.setCpf(clientDTO.cpf());
+        client.setEndereco(clientDTO.endereco());
+        client.setCep(clientDTO.cep());
+
+        List<Telefone> telefones = clientDTO.telefones().stream().map(telefoneDTO -> {
+            var telefone = new Telefone();
+            telefone.setId(telefoneDTO.id());
+            telefone.setNumero(telefoneDTO.numero());
+            telefone.setTipo(telefoneDTO.tipo());
+            telefone.setClient(client);
+            return telefone;
+        }).collect(Collectors.toList());
+        client.setTelefones(telefones);
+
+        List<Email> emails = clientDTO.emails().stream().map(emailDTO -> {
+            var email = new Email();
+            email.setId(emailDTO.id());
+            email.setEmail(emailDTO.email());
+            email.setClient(client);
+            return email;
+
+        }).collect(Collectors.toList());
+        client.setEmails(emails);
 
         return client;
     }

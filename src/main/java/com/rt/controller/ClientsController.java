@@ -50,13 +50,21 @@ public class ClientsController {
 
     //TODO voltar aqui para possiveis correcoes.
     @PutMapping("/{id}")
-    public ClientDTO update(@PathVariable Long id, @RequestBody ClientDTO client){
+    public ClientDTO update(@PathVariable Long id, @RequestBody ClientDTO clientDTO){
         return clientRepository.findById(id)
                 .map(res -> {
-                    res.setNome(client.nome());
-                    res.setCpf(client.cpf());
-                    res.setEndereco(client.endereco());
-                    res.setCep(client.cep());
+                    Client client = clientMapper.toEntity(clientDTO);
+                    res.setNome(clientDTO.nome());
+                    res.setCpf(clientDTO.cpf());
+                    res.setEndereco(clientDTO.endereco());
+                    res.setCep(clientDTO.cep());
+
+                    res.getTelefones().clear();
+                    res.getTelefones().addAll(client.getTelefones());
+
+                    // Atualizando a coleção de emails
+                    res.getEmails().clear();
+                    res.getEmails().addAll(client.getEmails());
 
 
                     return clientMapper.toDTO(clientRepository.save(res));

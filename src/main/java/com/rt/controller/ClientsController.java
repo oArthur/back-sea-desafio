@@ -5,16 +5,20 @@ import com.rt.dto.mapper.ClientMapper;
 import com.rt.exception.RecordNotFoundException;
 import com.rt.model.Client;
 import com.rt.repository.ClientRepository;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RestController //diz que é uma API
-@RequestMapping("/api/clients") //ROTA
+@Validated
+@RestController
+@RequestMapping("/api/clients")
 public class ClientsController {
 
 
@@ -35,7 +39,7 @@ public class ClientsController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ClientDTO> findById(@PathVariable Long id){
+    public ResponseEntity<ClientDTO> findById(@PathVariable @NotNull @Positive Long id){
         return clientRepository.findById(id).map(clientMapper::toDTO)
                 .map(res -> ResponseEntity.ok().body(res))
                 .orElse(ResponseEntity.notFound().build());
@@ -50,7 +54,7 @@ public class ClientsController {
 
     //TODO voltar aqui para possiveis correcoes.
     @PutMapping("/{id}")
-    public ClientDTO update(@PathVariable Long id, @RequestBody ClientDTO clientDTO){
+    public ClientDTO update(@PathVariable @NotNull @Positive Long id, @RequestBody ClientDTO clientDTO){
         return clientRepository.findById(id)
                 .map(res -> {
                     Client client = clientMapper.toEntity(clientDTO);
@@ -73,7 +77,7 @@ public class ClientsController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id){
+    public ResponseEntity<Void> delete(@PathVariable @NotNull @Positive Long id){
         return clientRepository.findById(id)
                 .map(res -> {
                     clientRepository.deleteById(id);

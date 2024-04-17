@@ -1,59 +1,67 @@
 package com.rt.controller;
 
+import com.rt.dto.ClientDTO;
+import com.rt.dto.mapper.ClientMapper;
+import com.rt.exception.RecordNotFoundException;
 import com.rt.model.Client;
 import com.rt.repository.ClientRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController //diz que é uma API
 @RequestMapping("/api/clients") //ROTA
 public class ClientsController {
 
 
-    private ClientRepository clientRepository;
+    private final ClientRepository clientRepository;
+    private final ClientMapper clientMapper;
 
-    public ClientsController(ClientRepository clientRepository) {
+    public ClientsController(ClientRepository clientRepository, ClientMapper clientMapper) {
         this.clientRepository = clientRepository;
+        this.clientMapper = clientMapper;
     }
 
     @GetMapping
-    public List<Client> list(){
-        return clientRepository.findAll();
+    public List<ClientDTO> list(){
+        return clientRepository.findAll()
+                .stream()
+                .map(clientMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Client> findById(@PathVariable Long id){
-        return clientRepository.findById(id)
+    public ResponseEntity<ClientDTO> findById(@PathVariable Long id){
+        return clientRepository.findById(id).map(clientMapper::toDTO)
                 .map(res -> ResponseEntity.ok().body(res))
                 .orElse(ResponseEntity.notFound().build());
     }//Voltar aqui depois
 
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED)
-    public Client create(@RequestBody Client client){ //pega a reposta e mapeia com o Client
+    public ClientDTO create(@RequestBody ClientDTO client){ //pega a reposta e mapeia com o Client
 
-        return clientRepository.save(client);
+        return clientMapper.toDTO(clientRepository.save(clientMapper.toEntity(client)));
     }
 
+    //TODO voltar aqui para possiveis correcoes.
     @PutMapping("/{id}")
-    public ResponseEntity<Client> update(@PathVariable Long id, @RequestBody Client client){
+    public ClientDTO update(@PathVariable Long id, @RequestBody ClientDTO client){
         return clientRepository.findById(id)
                 .map(res -> {
-                    res.setNome(client.getNome());
-                    res.setCpf(client.getCpf());
-                    res.setTelefone(client.getTelefone());
-                    res.setTipo(client.getTipo());
-                    res.setEmail(client.getEmail());
-                    res.setEndereco(client.getEndereco());
-                    res.setCep(client.getCep());
-                    Client updatedClient = clientRepository.save(res);
+                    res.setNome(client.nome());
+                    res.setCpf(client.cpf());
+                    res.setEndereco(client.endereco());
+                    res.setCep(client.cep());
 
-                    return ResponseEntity.ok().body(updatedClient);
+
+                    return clientMapper.toDTO(clientRepository.save(res));
                 })
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(() -> new RecordNotFoundException(id));
     }
 
     @DeleteMapping("/{id}")
@@ -63,6 +71,6 @@ public class ClientsController {
                     clientRepository.deleteById(id);
                     return ResponseEntity.noContent().<Void>build();
                 })
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(() -> new RecordNotFoundException(id));
     }
 }

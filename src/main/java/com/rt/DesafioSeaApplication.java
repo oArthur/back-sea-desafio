@@ -1,6 +1,8 @@
 package com.rt;
 
 import com.rt.model.Client;
+import com.rt.model.Email;
+import com.rt.model.Telefone;
 import com.rt.repository.ClientRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -23,10 +25,29 @@ public class DesafioSeaApplication {
 			c.setNome("Arthur");
 			c.setCpf("04929782191");
 			c.setEndereco("Guara");
-			c.setTelefone("61982726392");
-			c.setTipo("Celular");
 			c.setCep("71071000");
-			c.setEmail("arthur@gmail.com");
+
+			Telefone t = new Telefone();
+			t.setTipo("Celular");
+			t.setNumero("61982726392");
+			t.setClient(c);
+			c.getTelefones().add(t);
+
+			Telefone t1 = new Telefone();
+			t1.setTipo("Celular");
+			t1.setNumero("55619809752");
+			t1.setClient(c);
+			c.getTelefones().add(t1);
+
+			Email e = new Email();
+			e.setEmail("arthur@gmail.com");
+			e.setClient(c);
+			c.getEmails().add(e);
+
+			Email e1 = new Email();
+			e1.setEmail("arthur@hotmail.com");
+			e1.setClient(c);
+			c.getEmails().add(e1);
 			clientRepository.save(c);
 		};
 	}
